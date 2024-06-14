@@ -1,14 +1,12 @@
-const mongoose = require('mongoose')
+const db = require('./db')
 
-mongoose.connect(process.env.dbConnection)
-
-const productSchema = new mongoose.Schema({
-    name: String,
-    description: String,
-    price: Number,
-    stock: Number
+const productSchema = new db.mongoose.Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    stock: { type: Number, required: true }
 })
 
-const Product = mongoose.model('Product', productSchema)
+const Product = db.mongoose.model(db.models.Product, productSchema)
 
 module.exports = Product

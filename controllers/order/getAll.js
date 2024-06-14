@@ -1,8 +1,13 @@
-const Order = require('../../models/order')
+const Order = require('../../models/order');
+const OrderDetails = require('../../models/orderDetails')
+const User = require('../../models/user')
 
 async function getAll(req, res) {
     try {
-        const orders = await Order.find().populate('user', 'name email').populate('details', 'product quantity price');
+        let orders = await Order.find().populate([
+            { path: 'user', select: '-password' },
+            { path: 'details', populate: { path: 'product' } }
+        ]);
         res.send(orders);
     } catch (err) {
         console.error(err);
@@ -10,4 +15,4 @@ async function getAll(req, res) {
     }
 }
 
-module.exports = getAll
+module.exports = getAll;

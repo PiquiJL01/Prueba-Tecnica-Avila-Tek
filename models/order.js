@@ -1,13 +1,14 @@
-const mongoose = require('mongoose')
+const db = require('./db')
 
-mongoose.connect(process.env.dbConnection)
-
-const orderSchema = new mongoose.Schema({
-    status: "Processing" | "In Transit" | "Delivered",
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    details: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderDetails' }]
+const orderSchema = new db.mongoose.Schema({
+    status: {
+        type: String,
+        enum: ["Processing", "In Transit", "Delivered", "Cancelled"],
+        required: true
+    },
+    user: { type: db.mongoose.Schema.Types.ObjectId, ref: db.models.User, required: true },
+    details: [{ type: db.mongoose.Schema.Types.ObjectId, ref: db.models.OrderDetails }]
 })
-
-const Order = mongoose.model('Order', orderSchema)
+const Order = db.mongoose.model(db.models.Order, orderSchema)
 
 module.exports = Order

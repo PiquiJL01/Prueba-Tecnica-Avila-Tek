@@ -1,3 +1,5 @@
+const jwtSecret = process.env.secret
+
 module.exports = {
-    secret: 'bezkoder-secret-key'
+    jwtSecret
 }

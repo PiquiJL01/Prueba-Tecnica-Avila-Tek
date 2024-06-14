@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const config = require('../../config/auth.config')
+const { jwtSecret } = require('../../config/auth.config')
 const User = require('../../models/user')
 
 function login(req, res) {
@@ -17,7 +17,7 @@ function login(req, res) {
                 return res.status(401).send({ message: 'Invalid password' })
             }
 
-            const token = jwt.sign({ id: user.id }, config.secret, {
+            const token = jwt.sign({ id: user.id }, jwtSecret, {
                 expiresIn: 86400 // 24 hours
             })
 

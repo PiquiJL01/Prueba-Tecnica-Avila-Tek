@@ -1,6 +1,7 @@
 const Order = require('../../models/order')
 const OrderDetails = require('../../models/orderDetails')
 const Product = require('../../models/product')
+const User = require('../../models/user')
 
 async function create(req, res) {
     try {
@@ -33,18 +34,29 @@ async function create(req, res) {
 
             // Create order detail
             const orderDetail = new OrderDetails({ product: product._id, order: order._id, quantity: detail.quantity, price: detail.price });
-            return orderDetail.save();
+            await orderDetail.save();
+
+            // Add order detail to order
+            order.details.push(orderDetail._id);
         });
 
-        // Save order and order details
-        await order.save();
+        // await OrderDetails and save order
         await Promise.all(orderDetailsPromises);
+        await order.save();
 
-        res.status(201).send(order);
+        // Populate order details
+        const populatedOrder = await order.populate([
+            { path: 'user' },
+            { path: 'details', populate: { path: 'product' } }
+        ])
+
+        res.status(201).send(populatedOrder);
     } catch (err) {
         console.error(err);
-        res.status(500).send({ message: 'Error creating order' });
+        res.status(500).send({ message: err.message });
     }
 }
+
+module.exports = create;
 
 module.exports = create
