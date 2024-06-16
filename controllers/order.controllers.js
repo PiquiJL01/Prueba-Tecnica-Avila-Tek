@@ -2,12 +2,12 @@ const create = require('./order/create')
 const getAll = require('./order/getAll')
 const get = require('./order/get')
 const updateOrderStatus = require('./order/updateOrderStatus')
-const remove = require('./order/remove')
+const cancel = require('./order/cancel')
 
 module.exports = {
     create,
     getAll,
     get,
     updateOrderStatus,
-    remove
+    cancel: cancel
 }

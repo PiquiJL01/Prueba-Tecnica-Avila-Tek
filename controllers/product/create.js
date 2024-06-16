@@ -6,7 +6,7 @@ async function create(req, res) {
         await product.save()
         res.json(product)
     } catch (err) {
-        res.status(400).json({ message: 'Error creating product' })
+        res.status(400).json({ message: 'Error creando el producto' })
     }
 }
 

@@ -11,7 +11,7 @@ async function getAll(req, res) {
         res.send(orders);
     } catch (err) {
         console.error(err);
-        res.status(500).send({ message: 'Error getting orders' });
+        res.status(500).send({ message: 'Error obteniendo las ordenes' });
     }
 }
 

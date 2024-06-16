@@ -4,56 +4,60 @@ const Product = require('../../models/product')
 const User = require('../../models/user')
 
 async function create(req, res) {
+    let customError = false
     try {
         const user = req.body.user;
         const details = req.body.details;
 
-        // Check if the user exists
+        // Chequear si el usuario existe
         const userDoc = await User.findById(user);
         if (!userDoc) {
-            return res.status(404).send({ message: 'User not found' });
+            return res.status(404).send({ message: 'Usuario no encontrado' });
         }
 
-        // Create a new order
-        const order = new Order({ user, status: 'Processing' });
+        // Crear una nueva orden
+        const order = new Order({ user, status: 'Procesando' });
+        await order.save()
 
-        // Create order details and update product quantities
+        // Crea los detalles de las ordenes y actualiza el stock
         const orderDetailsPromises = details.map(async (detail) => {
             const product = await Product.findById(detail.product);
             if (!product) {
-                throw new Error(`Product not found: ${detail.product}`);
+                customError = true
+                throw new Error(`Producto no encontrado: ${detail.product}`);
             }
 
             if (product.stock < detail.quantity) {
-                throw new Error(`Not enough stock for product ${product.name}. Available: ${product.stock}, Ordered: ${detail.quantity}`);
+                customError = true
+                throw new Error(`No hay suficiente stock de ${product.name}. Disponible: ${product.stock}, Pedido: ${detail.quantity}`);
             }
 
-            // Update product quantity
+            // Actualiza las cantidades en el stock
             product.stock -= detail.quantity;
             await product.save();
 
-            // Create order detail
+            // Crea los detalles de la orden
             const orderDetail = new OrderDetails({ product: product._id, order: order._id, quantity: detail.quantity, price: detail.price });
             await orderDetail.save();
 
-            // Add order detail to order
+            // Agrega el detalle a la orden
             order.details.push(orderDetail._id);
+            await order.save()
         });
 
-        // await OrderDetails and save order
+        // Espera de la creacion de todos los OrderDetails
         await Promise.all(orderDetailsPromises);
-        await order.save();
 
-        // Populate order details
+        // Poblar los campos con referencias
         const populatedOrder = await order.populate([
-            { path: 'user' },
+            { path: 'user', select: '-password' },
             { path: 'details', populate: { path: 'product' } }
         ])
 
         res.status(201).send(populatedOrder);
     } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: err.message });
+        res.status(500).send({ message: customError ? err.message : 'Error al crear la orden' });
+
     }
 }
 

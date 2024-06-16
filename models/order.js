@@ -3,7 +3,7 @@ const db = require('./db')
 const orderSchema = new db.mongoose.Schema({
     status: {
         type: String,
-        enum: ["Processing", "In Transit", "Delivered", "Cancelled"],
+        enum: ["Procesando", "En Transito", "Entregado", "Cancelado"],
         required: true
     },
     user: { type: db.mongoose.Schema.Types.ObjectId, ref: db.models.User, required: true },

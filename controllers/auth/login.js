@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
+//const bcrypt = require('bcryptjs')
 const { jwtSecret } = require('../../config/auth.config')
 const User = require('../../models/user')
 
@@ -9,16 +9,17 @@ function login(req, res) {
     })
         .then(user => {
             if (!user) {
-                return res.status(404).send({ message: 'User not found' })
+                return res.status(404).send({ message: 'Usuario no encontrado' })
             }
 
-            const passwordIsValid = req.body.password === user.password//bcrypt.compareSync(req.body.password, user.password)
+            //bcrypt.compareSync(req.body.password, user.password)
+            const passwordIsValid = req.body.password === user.password
             if (!passwordIsValid) {
-                return res.status(401).send({ message: 'Invalid password' })
+                return res.status(401).send({ message: 'Contraseña invalida' })
             }
 
             const token = jwt.sign({ id: user.id }, jwtSecret, {
-                expiresIn: 86400 // 24 hours
+                expiresIn: 86400 // 24 horas
             })
 
             res.status(200).send({

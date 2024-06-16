@@ -7,13 +7,13 @@ async function get(req, res) {
             { path: 'details', populate: { path: 'product' } }
         ]);
         if (!order) {
-            res.status(404).send({ message: 'Order not found' });
+            res.status(404).send({ message: 'Orden no encontrada' });
         } else {
             res.send(order);
         }
     } catch (err) {
         console.error(err);
-        res.status(500).send({ message: 'Error getting order' });
+        res.status(500).send({ message: 'Error obteniendo la orden' });
     }
 }
 

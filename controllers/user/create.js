@@ -6,7 +6,7 @@ async function create(req, res) {
         await user.save()
         res.json(user)
     } catch (err) {
-        res.status(400).json({ message: 'Error creating user' })
+        res.status(400).json({ message: 'Error creando el usuario' })
     }
 }
 
